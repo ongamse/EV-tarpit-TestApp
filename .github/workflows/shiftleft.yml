@@ -37,7 +37,7 @@ jobs:
         ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
           --app LaBrea \
           --tag branch=${{ github.head_ref }} \
-          --java --container 18fgsa/s3-resource $(pwd)
+          --java target/servlettarpit-jar-with-dependencies.jar
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
         SHIFTLEFT_API_HOST: www.shiftleft.io
