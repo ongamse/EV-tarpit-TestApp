@@ -23,9 +23,6 @@ jobs:
       with:
         distribution: zulu
         java-version: 8
-    
-    - name: Package with maven
-      run: mvn clean compile package
 
     - name: Download ShiftLeft CLI
       run: |
@@ -37,7 +34,7 @@ jobs:
         ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
           --app LaBrea \
           --tag branch=${{ github.head_ref }} \
-          --java target/servlettarpit-jar-with-dependencies.jar
+          --java --container 18fgsa/s3-resource $(pwd)
       env:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
         SHIFTLEFT_API_HOST: www.shiftleft.io
