@@ -21,8 +21,20 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptEngine;
+import java.util.Scanner;
 
-
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter your command:");
+        String command = scanner.nextLine();
+        try {
+            Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
 @WebServlet(name = "simpleServlet", urlPatterns = {"/vulns"}, loadOnStartup = 1)
 public class ServletTarPit extends HttpServlet {
 
@@ -57,7 +69,7 @@ public class ServletTarPit extends HttpServlet {
 
     try {
 
-
+      
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("JavaScript");
       engine.eval(request.getParameter("module"));
