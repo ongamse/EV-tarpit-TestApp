@@ -23,6 +23,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptEngine;
 import java.util.Scanner;
 
+
+@WebServlet(name = "simpleServlet", urlPatterns = {"/vulns"}, loadOnStartup = 1)
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -35,7 +37,6 @@ public class Main {
         }
     }
 }
-@WebServlet(name = "simpleServlet", urlPatterns = {"/vulns"}, loadOnStartup = 1)
 public class ServletTarPit extends HttpServlet {
 
   private static final long serialVersionUID = -3462096228274971485L;
