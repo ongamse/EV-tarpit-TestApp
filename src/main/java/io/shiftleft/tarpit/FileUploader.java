@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -34,6 +38,16 @@ public class FileUploader extends HttpServlet {
     super();
   }
 
+public class FileWriter {
+    public void writeToFile(String filePath, String content) throws IOException {
+        // Validate the file path to prevent directory traversal
+        if (new File(filePath).getCanonicalPath().startsWith("/var/data")) {
+            Files.write(Paths.get(filePath), content.getBytes(), StandardOpenOption.CREATE);
+        } else {
+            throw new IllegalArgumentException("Invalid file path");
+        }
+    }
+}
 
   /**
    * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
