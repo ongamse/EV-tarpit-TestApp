@@ -50,14 +50,15 @@ public class FileWriter extends HttpServlet {
   /**
    * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
     Part filePart = request.getPart("zipFile");
 
     InputStream input = filePart.getInputStream();
 
-    File targetFile = new File(productSourceFolder + filePart.getSubmittedFileName());
+    String submittedFileName = filePart.getSubmittedFileName();
+    File targetFile = new File(productSourceFolder, submittedFileName);
 
     targetFile.createNewFile();
     OutputStream out = new FileOutputStream(targetFile);
@@ -76,6 +77,34 @@ public class FileWriter extends HttpServlet {
     Unzipper.unzipFile(targetFile.getAbsolutePath(), productDestinationFolder);
 
     doGet(request, response);
+  }
+
+public static void unzipFile(String zipFileWithAbsolutePath, String destination)
+      throws IOException {
+    if (!doesFileExists(zipFileWithAbsolutePath)) {
+      throw new FileNotFoundException("The given zip file not found: " + zipFileWithAbsolutePath);
+    }
+
+    String fileName = getFileFromPath(zipFileWithAbsolutePath);
+    String finalDestination = getFinalDestination(fileName, destination);
+    createDirectoryNamedAsZipFile(finalDestination);
+
+    try {
+      // Initiate ZipFile object with the path/name of the zip file.
+      ZipFile zipFile = new ZipFile(zipFileWithAbsolutePath);
+
+      // Extracts all files to the path specified
+      zipFile.extractAll(finalDestination);
+
+    } catch (ZipException e) {
+      e.printStackTrace();
+    }
+
+  }
+
+private static boolean doesFileExists(String fileName) {
+    File f = new File(fileName);
+    return f.exists();
   }
 
 }
