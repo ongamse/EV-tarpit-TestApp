@@ -38,7 +38,7 @@ public class FileUploader extends HttpServlet {
     super();
   }
 
-public class FileWriter {
+public class FileWriter 
     public void writeToFile(String filePath, String content) throws IOException {
         // Validate the file path to prevent directory traversal
         if (new File(filePath).getCanonicalPath().startsWith("/var/data")) {
@@ -47,7 +47,6 @@ public class FileWriter {
             throw new IllegalArgumentException("Invalid file path");
         }
     }
-}
 
   /**
    * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
