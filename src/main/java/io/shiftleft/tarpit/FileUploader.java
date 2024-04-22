@@ -25,7 +25,7 @@ import io.shiftleft.tarpit.util.Unzipper;
  */
 @WebServlet("/FileUploader")
 @MultipartConfig
-public class FileUploader extends HttpServlet {
+public class FileWriter extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
   private static String productSourceFolder = System.getenv("PRODUCT_SRC_FOLDER");
@@ -34,12 +34,11 @@ public class FileUploader extends HttpServlet {
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public FileUploader() {
+  public FileWriter() {
     super();
   }
 
-public class FileWriter 
-    public void writeToFile(String filePath, String content) throws IOException {
+  public void writeToFile(String filePath, String content) throws IOException {
         // Validate the file path to prevent directory traversal
         if (new File(filePath).getCanonicalPath().startsWith("/var/data")) {
             Files.write(Paths.get(filePath), content.getBytes(), StandardOpenOption.CREATE);
