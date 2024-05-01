@@ -19,7 +19,7 @@ jobs:
         java-version: 11
     
     - name: Package with maven
-      run: mvn clean compile package
+      run: mvn clean install
 
     - name: Setup Java JDK v8
       uses: actions/setup-java@v3
