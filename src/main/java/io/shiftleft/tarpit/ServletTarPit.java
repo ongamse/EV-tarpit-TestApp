@@ -27,6 +27,7 @@ import javax.script.ScriptEngine;
 public class ServletTarPit extends HttpServlet {
 
   private static final long serialVersionUID = -3462096228274971485L;
+  private static BasicDataSource dataSource;
   private Connection connection;
   private PreparedStatement preparedStatement;
   private ResultSet resultSet;
@@ -34,6 +35,26 @@ public class ServletTarPit extends HttpServlet {
 
   private final static Logger LOGGER = Logger.getLogger(ServletTarPit.class.getName());
 
+@Override
+   public static void main(String[] args) throws SQLException {
+        dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/mydatabase");
+        dataSource.setUsername("username");
+        dataSource.setPassword("password");
+
+        String userInput = "attacker-controlled";
+        String query = "SELECT * FROM users WHERE username = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, userInput);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString("username"));
+            }
+        }
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
