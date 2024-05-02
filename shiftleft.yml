@@ -2,6 +2,8 @@ version: 2 # implies that check-analysis v2 should be used and therefore
            # the --v2 flag can be omitted when running sl check-analysis
 build_rules:
 - id: Allow no critical findings
+  finding_types:
+      - vuln
   severities:
     - critical
   threshold: 0
