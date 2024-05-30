@@ -81,7 +81,7 @@ jobs:
       - name: Post Build Rules to PR
         if: always()
         run: |
-          BUILD_RULES_OUTPUT=$(<${GITHUB_WORKSPACE}/check-analysis.md)
+          BUILD_RULES_OUTPUT=$(/home/runner/check-analysis.md)
           body=$( jq -n --arg body "$BUILD_RULES_OUTPUT" '{ "body": $body }' )
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
@@ -92,7 +92,7 @@ jobs:
       - name: Post Analysis Report to PR
         if: always()
         run: |
-          ANALYSIS_REPORT_OUTPUT=$(<${GITHUB_WORKSPACE}/ngsast-bestfix-report.html)
+          ANALYSIS_REPORT_OUTPUT=$(/home/runner/ngsast-bestfix-report.html)
           body=$( jq -n --arg body "$ANALYSIS_REPORT_OUTPUT" '{ "body": $body }' )
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
