@@ -43,13 +43,7 @@ jobs:
         SHIFTLEFT_API_HOST: www.shiftleft.io
         SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
         SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
-
-  Build-Rules:
-    runs-on: ubuntu-latest
-    permissions: write-all
-    needs: NextGen-Static-Analysis
-    steps:
-    - uses: actions/checkout@v3
+        
     - name: Run Bestfix script to generate report
       shell: bash
       if: github.event_name == 'pull_request'
@@ -73,8 +67,14 @@ jobs:
 
       env:
           GH_API_TOKEN: ${{ secrets.API_TOKEN }}
-          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}        
-    
+          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
+          
+  Build-Rules:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: NextGen-Static-Analysis
+    steps:
+    - uses: actions/checkout@v3
     - name: Download ShiftLeft CLI
       run: |
          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
