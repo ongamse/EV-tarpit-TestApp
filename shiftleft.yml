@@ -26,3 +26,4 @@ build_rules:
     licenses:
       - block:
         - GPL-2.0
+  threshold: 0
