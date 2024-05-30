@@ -68,6 +68,10 @@ jobs:
               --github-pr-user=${{ github.repository_owner }} \
               --github-pr-repo=${{ github.event.repository.name }} \
               --github-token=${{ secrets.GITHUB_TOKEN }}
+          if [[ $? -ne 0 ]]; then
+            echo "::error::Build rules validation failed"
+            exit 1
+          fi
         env:
           SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
           SHIFTLEFT_API_HOST: www.shiftleft.io
@@ -75,6 +79,7 @@ jobs:
           SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
 
       - name: Post Build Rules to PR
+        if: always()
         run: |
           BUILD_RULES_OUTPUT=$(<${GITHUB_WORKSPACE}/check-analysis.md)
           body=$( jq -n --arg body "$BUILD_RULES_OUTPUT" '{ "body": $body }' )
@@ -85,6 +90,7 @@ jobs:
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.number }}/comments"
 
       - name: Post Analysis Report to PR
+        if: always()
         run: |
           ANALYSIS_REPORT_OUTPUT=$(<${GITHUB_WORKSPACE}/ngsast-bestfix-report.html)
           body=$( jq -n --arg body "$ANALYSIS_REPORT_OUTPUT" '{ "body": $body }' )
