@@ -33,7 +33,7 @@ jobs:
       - name: preZero Static Analysis
         run: |
           ${GITHUB_WORKSPACE}/sl --version
-          ${GITHUB_WORKSPACE}/sl analyze --strict --wait
+          ${GITHUB_WORKSPACE}/sl analyze --strict --wait --verbose \
             --app LaBrea \
             --tag branch=${{ github.head_ref }} \
             --javasrc .
