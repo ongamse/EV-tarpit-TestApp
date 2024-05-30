@@ -33,7 +33,7 @@ jobs:
       - name: preZero Static Analysis
         run: |
           ${GITHUB_WORKSPACE}/sl --version
-          ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
+          ${GITHUB_WORKSPACE}/sl analyze --strict --wait Can you please provide me with access to this document?
             --app LaBrea \
             --tag branch=${{ github.head_ref }} \
             --javasrc .
@@ -58,28 +58,11 @@ jobs:
 
       - name: Run bestfix script to generate report
         run: |
-          python3 field-integrations/shiftleft-utils/bestfix.py -a LaBrea -o $HOME/ngsast-bestfix-report.html
+          python3 field-integrations/shiftleft-utils/bestfix.py -a ${{ github.repository }} -o $HOME/ngsast-bestfix-report.html
         working-directory: ${{ github.workspace }}
-        env:
-          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-          SHIFTLEFT_API_HOST: www.shiftleft.io
-          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
-          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
       
-      - name: Post Analysis Report to PR
-        run: |
-          CHECK_ANALYSIS_OUTPUT=$(<ngsast-bestfix-report.html)
-          body=$( jq -n --arg body "$CHECK_ANALYSIS_OUTPUT" '{ "body": $body }' )
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            -d "$body" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.number }}/comments"
-      
-      - name: Download ShiftLeft CLI
-        run: |
-          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
       - name: Validate Build Rules
+        id: validate_build_rules
         run: |
           ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea \
               --github-pr-number=${{github.event.number}} \
@@ -92,4 +75,22 @@ jobs:
           SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
           SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
 
+      - name: Post Build Rules to PR
+        run: |
+          BUILD_RULES_OUTPUT=$(<${GITHUB_WORKSPACE}/check-analysis.md)
+          body=$( jq -n --arg body "$BUILD_RULES_OUTPUT" '{ "body": $body }' )
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "$body" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.number }}/comments"
 
+      - name: Post Analysis Report to PR
+        run: |
+          ANALYSIS_REPORT_OUTPUT=$(<${GITHUB_WORKSPACE}/ngsast-bestfix-report.html)
+          body=$( jq -n --arg body "$ANALYSIS_REPORT_OUTPUT" '{ "body": $body }' )
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d "$body" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.number }}/comments"
