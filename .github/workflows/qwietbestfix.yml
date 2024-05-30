@@ -49,22 +49,6 @@ jobs:
     needs: NextGen-Static-Analysis
     steps:
       - uses: actions/checkout@v3
-      - name: Download ShiftLeft CLI
-        run: |
-          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
-      - name: Validate Build Rules
-        run: |
-          ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea \
-              --github-pr-number=${{github.event.number}} \
-              --github-pr-user=${{ github.repository_owner }} \
-              --github-pr-repo=${{ github.event.repository.name }} \
-              --github-token=${{ secrets.GITHUB_TOKEN }}
-        env:
-          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-          SHIFTLEFT_API_HOST: www.shiftleft.io
-          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
-          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
-
       - name: Download bestfix script
         run: |
           python3 -m pip install --upgrade pip
@@ -86,3 +70,21 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -d "$body" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.number }}/comments"
+      
+      - name: Download ShiftLeft CLI
+        run: |
+          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
+      - name: Validate Build Rules
+        run: |
+          ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea \
+              --github-pr-number=${{github.event.number}} \
+              --github-pr-user=${{ github.repository_owner }} \
+              --github-pr-repo=${{ github.event.repository.name }} \
+              --github-token=${{ secrets.GITHUB_TOKEN }}
+        env:
+          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
+          SHIFTLEFT_API_HOST: www.shiftleft.io
+          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
+          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
+
+
