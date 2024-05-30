@@ -20,3 +20,9 @@ build_rules:
     - container
   options:
     reachable: true
+- id: Allow no license violations
+    finding_types:
+      - license
+    licenses:
+      - block:
+        - GPL-2.0
