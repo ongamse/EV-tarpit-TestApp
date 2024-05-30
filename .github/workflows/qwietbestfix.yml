@@ -52,7 +52,7 @@ jobs:
 
       - name: Run bestfix script to generate report
         run: |
-          python3 field-integrations/shiftleft-utils/bestfix.py -a ${{ github.repository }} -o $HOME/ngsast-bestfix-report.html
+          python3 field-integrations/shiftleft-utils/bestfix.py -a LaBrea -o $HOME/ngsast-bestfix-report.html
         working-directory: ${{ github.workspace }}
         env:
           SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
