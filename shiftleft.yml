@@ -22,7 +22,7 @@ build_rules:
     reachable: true
 - id: Allow no license violations
     finding_types:
-      - license
+      - licenses
     licenses:
       - block:
         - GPL-2.0
