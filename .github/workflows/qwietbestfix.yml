@@ -35,6 +35,7 @@ jobs:
           ${GITHUB_WORKSPACE}/sl --version
           ${GITHUB_WORKSPACE}/sl analyze --strict --wait
             --app LaBrea \
+            --verbose \
             --tag branch=${{ github.head_ref }} \
             --javasrc .
         env:
