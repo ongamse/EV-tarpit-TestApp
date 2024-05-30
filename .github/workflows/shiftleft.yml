@@ -48,7 +48,8 @@ jobs:
         python3 field-integrations/shiftleft-utils/bestfix.py -a ${{ github.event.repository.name }} -o $GITHUB_WORKSPACE/ngsast-bestfix-report.html
         bspoon $GITHUB_WORKSPACE/ngsast-bestfix-report.html --select body > $GITHUB_WORKSPACE/qwiet.html
 
-        BESTFIX_OUTPUT=$(cat $GITHUB_WORKSPACE/ngsast-bestfix-report.html)
+        # Strip HTML tags from the report
+        BESTFIX_OUTPUT=$(sed -e 's/<[^>]*>//g' $GITHUB_WORKSPACE/ngsast-bestfix-report.html)
         echo "${BESTFIX_OUTPUT}" > bestfix_output.txt
 
         BESTFIX_BODY=$(jq -n --rawfile body bestfix_output.txt '{body: $body}')
@@ -83,3 +84,4 @@ jobs:
          SHIFTLEFT_API_HOST: www.shiftleft.io
          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
+
