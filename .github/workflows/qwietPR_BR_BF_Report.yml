@@ -27,7 +27,7 @@ jobs:
     - name: preZero Static Analysis
       run: |
         ${GITHUB_WORKSPACE}/sl --version
-        ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
+        ${GITHUB_WORKSPACE}/sl analyze --strict --wait Can you please provide me with access to this document?
           --app LaBrea \
           --tag branch=${{ github.head_ref }} \
           --javasrc .
@@ -62,6 +62,13 @@ jobs:
         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
 
         curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_API_TOKEN}" -d @bestfix_body.json "${url}"
+
+        # Attach ngsast-bestfix-report.html to PR comment
+        curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/octet-stream" \
+          --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
+          -s -o /dev/null
 
       env:
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
