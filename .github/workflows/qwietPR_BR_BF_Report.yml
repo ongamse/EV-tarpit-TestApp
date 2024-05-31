@@ -62,6 +62,10 @@ jobs:
         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
 
         curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_API_TOKEN}" -d @bestfix_body.json "${url}"
+      env:
+        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
+        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
         # Attach ngsast-bestfix-report.html to PR comment
     - name: Attach ngsast-bestfix-report.html to PR comment
