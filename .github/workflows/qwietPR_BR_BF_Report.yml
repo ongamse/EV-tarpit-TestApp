@@ -1,6 +1,6 @@
 # This workflow integrates qwiet.ai preZero with GitHub
 # Visit https://docs.shiftleft.io for help
-name: qwiet.ai.pr.br.bf.report
+name: qwiet.ai.pr.br.bf
 
 on:
   pull_request:
@@ -62,37 +62,8 @@ jobs:
         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
 
         curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_API_TOKEN}" -d @bestfix_body.json "${url}"
-        curl -X POST -H "Authorization:token ${{ secrets.API_TOKEN }}" -H "Content-Type:application/json" -d '{"body":"Here is the bestfix report."}' "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" -s)
-        mv "${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" "${GITHUB_WORKSPACE}/artifact"
-        echo "::set-output name=artifact_path::${GITHUB_WORKSPACE}/artifact"        
-      env:
-        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
-        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
-        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
-    - name: Download Bestfix Report Artifact
-      if: success() && github.event_name == 'pull_request'
-      uses: actions/download-artifact@v2
-      with:
-        name: artifact
-        path: ${{ github.workspace }}/artifact
-      continue-on-error: true
       env:
-        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
-        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
-        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-
-    - name: Attach Bestfix Report to PR comment
-      if: success() && github.event_name == 'pull_request'
-      run: |
-        if [ -f "${{ github.workspace }}/artifact/ngsast-bestfix-report.html" ]; then
-          curl -X POST -H "Authorization: token ${{ secrets.API_TOKEN }}" -H "Content-Type: application/octet-stream" --data-binary @"${{ github.workspace }}/artifact/ngsast-bestfix-report.html" "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" -s -o /dev/null
-        else
-          echo "Bestfix report not found."
-        fi
-      continue-on-error: true
-      env:
-        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
