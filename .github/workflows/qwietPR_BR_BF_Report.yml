@@ -62,31 +62,30 @@ jobs:
         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
 
         curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_API_TOKEN}" -d @bestfix_body.json "${url}"
+        # Attach ngsast-bestfix-report.html to PR comment
+        mv "${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" "${GITHUB_WORKSPACE}/artifact"
+        echo "::set-output name=artifact_path::${GITHUB_WORKSPACE}/artifact"
+      id: upload_artifact
+      continue-on-error: true
+        
       env:
         COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
-        # Attach ngsast-bestfix-report.html to PR comment
-    - name: Upload Bestfix Report as Artifact
-      if: success() && github.event_name == 'pull_request'
-      run: |
-        mv "${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" "${GITHUB_WORKSPACE}/artifact"
-        echo "::set-output name=artifact_path::${GITHUB_WORKSPACE}/artifact"
-      id: upload_artifact
-      continue-on-error: true
-
     - name: Post Comment with Bestfix Report
-      if: success() && github.event_name == 'pull_request'
-      run: |
         COMMENT_RESPONSE=$(curl -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Content-Type: application/json" \
-          -d '{"body":"Here is the bestfix report."}' \
-          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
-          -s)
+           -H "Authorization:token ${{ secrets.API_TOKEN }}" \
+           -H "Content-Type:application/json" \
+           -d '{"body":"Here is the bestfix report."}' \
+           "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
+           -s)
         COMMENT_ID=$(echo "${COMMENT_RESPONSE}" | jq -r '.id')
         echo "COMMENT_ID=${COMMENT_ID}" >> $GITHUB_ENV
+      env:
+        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
+        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
     - name: Download Bestfix Report Artifact
       if: success() && github.event_name == 'pull_request'
@@ -94,13 +93,17 @@ jobs:
       with:
         name: artifact
         path: ${{ github.workspace }}/artifact
+      env:
+        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
+        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
+        SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
     - name: Attach Bestfix Report to PR comment
       if: success() && github.event_name == 'pull_request'
       run: |
         if [ -f "${{ github.workspace }}/artifact/ngsast-bestfix-report.html" ]; then
           curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token ${{ secrets.API_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
             --data-binary @"${{ github.workspace }}/artifact/ngsast-bestfix-report.html" \
             "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
