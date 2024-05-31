@@ -68,23 +68,26 @@ jobs:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
         # Attach ngsast-bestfix-report.html to PR comment
-    - name: Attach ngsast-bestfix-report.html to PR comment
-      id: attach_comment
+    - name: Post Comment with Bestfix Report
+      id: post_comment
       run: |
         COMMENT_RESPONSE=$(curl -X POST \
-           -H "Authorization: token ${{ secrets.API_TOKEN }}" \
-           -H "Content-Type: application/json" \
-           -d '{"body":"Here is the bestfix report."}' \
-           "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
-           -s)
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{"body":"Here is the bestfix report."}' \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
+          -s)
         COMMENT_ID=$(echo "${COMMENT_RESPONSE}" | jq -r '.id')
         echo "COMMENT_ID=${COMMENT_ID}" >> $GITHUB_ENV
 
+    - name: Attach ngsast-bestfix-report.html to PR comment
+      if: success() && github.event_name == 'pull_request'
+      run: |
         curl -X POST \
-          -H "Authorization: token ${{ secrets.API_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/octet-stream" \
           --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
-          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${COMMENT_ID}/attachments" \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
           -s -o /dev/null
       env:
         COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
