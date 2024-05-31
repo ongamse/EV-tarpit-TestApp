@@ -1,6 +1,6 @@
 # This workflow integrates qwiet.ai preZero with GitHub
 # Visit https://docs.shiftleft.io for help
-name: qwiet.ai.pr.br.bf
+name: qwiet.ai.pr.br.bf.report
 
 on:
   pull_request:
