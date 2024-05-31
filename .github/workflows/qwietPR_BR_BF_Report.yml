@@ -65,12 +65,20 @@ jobs:
 
         # Attach ngsast-bestfix-report.html to PR comment
         curl -X POST \
-          -H "Authorization: token ${{ secrets.API_TOKEN }}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{"body":"Here is the bestfix report."}' \
           "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
           -s -o /dev/null
+
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Content-Type: application/octet-stream" \
+          --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
+          -s -o /dev/null
       env:
+        COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
