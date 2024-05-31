@@ -62,15 +62,13 @@ jobs:
         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
 
         # Upload the report file as an attachment to the pull request
-        curl -s -X POST \
-          -H "Authorization: Bearer ${GH_PAT}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Content-Type: application/json" \
-          --data-binary "@$GITHUB_WORKSPACE/ngsast-bestfix-report.html" \
-          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments" 
-
+    - name: Attach HTML report to PR
+      if: github.event_name == 'pull_request'
+      run: |
+         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
+         curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_API_TOKEN}" -F "raw_html=@$GITHUB_WORKSPACE/qwiet.html" "${url}"
       env:
-        GH_PAT: ${{ secrets.GH_API_TOKEN }}
+        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
   Build-Rules:
