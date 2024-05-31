@@ -74,6 +74,7 @@ jobs:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
     - name: Post Comment with Bestfix Report
+      run: |  
         COMMENT_RESPONSE=$(curl -X POST \
            -H "Authorization:token ${{ secrets.API_TOKEN }}" \
            -H "Content-Type:application/json" \
