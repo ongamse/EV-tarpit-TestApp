@@ -76,14 +76,6 @@ jobs:
       id: upload_artifact
       continue-on-error: true
 
-    - name: Upload Bestfix Report as Artifact
-      if: success() && github.event_name == 'pull_request'
-      run: |
-        mv "${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" "${GITHUB_WORKSPACE}/artifact"
-        echo "::set-output name=artifact_path::${GITHUB_WORKSPACE}/artifact"
-      id: upload_artifact
-      continue-on-error: true
-
     - name: Post Comment with Bestfix Report
       if: success() && github.event_name == 'pull_request'
       run: |
