@@ -76,11 +76,19 @@ jobs:
       id: upload_artifact
       continue-on-error: true
 
+    - name: Upload Bestfix Report as Artifact
+      if: success() && github.event_name == 'pull_request'
+      run: |
+        mv "${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" "${GITHUB_WORKSPACE}/artifact"
+        echo "::set-output name=artifact_path::${GITHUB_WORKSPACE}/artifact"
+      id: upload_artifact
+      continue-on-error: true
+
     - name: Post Comment with Bestfix Report
       if: success() && github.event_name == 'pull_request'
       run: |
         COMMENT_RESPONSE=$(curl -X POST \
-          -H "Authorization: token ${{ secrets.API_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d '{"body":"Here is the bestfix report."}' \
           "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
@@ -98,13 +106,16 @@ jobs:
     - name: Attach Bestfix Report to PR comment
       if: success() && github.event_name == 'pull_request'
       run: |
-        curl -X POST \
-          -H "Authorization: token ${{ secrets.API_TOKEN }}" \
-          -H "Content-Type: application/octet-stream" \
-          --data-binary @"${{ github.workspace }}/artifact/ngsast-bestfix-report.html" \
-          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
-          -s -o /dev/null
-
+        if [ -f "${{ github.workspace }}/artifact/ngsast-bestfix-report.html" ]; then
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @"${{ github.workspace }}/artifact/ngsast-bestfix-report.html" \
+            "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
+            -s -o /dev/null
+        else
+          echo "Bestfix report not found."
+        fi
       env:
         COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
