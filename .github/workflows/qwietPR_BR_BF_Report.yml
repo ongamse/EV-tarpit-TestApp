@@ -72,7 +72,7 @@ jobs:
       id: post_comment
       run: |
         COMMENT_RESPONSE=$(curl -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.API_TOKEN }}" \
           -H "Content-Type: application/json" \
           -d '{"body":"Here is the bestfix report."}' \
           "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments" \
@@ -87,7 +87,7 @@ jobs:
       if: success() && github.event_name == 'pull_request'
       run: |
         curl -X POST \
-          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.API_TOKEN }}" \
           -H "Content-Type: application/octet-stream" \
           --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
           "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ steps.post_comment.outputs.comment_id }}/attachments" \
