@@ -68,8 +68,16 @@ jobs:
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
 
         # Attach ngsast-bestfix-report.html to PR comment
+    - name: Upload Bestfix Report as Artifact
+      if: success() && github.event_name == 'pull_request'
+      run: |
+        mv "${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" "${GITHUB_WORKSPACE}/artifact"
+        echo "::set-output name=artifact_path::${GITHUB_WORKSPACE}/artifact"
+      id: upload_artifact
+      continue-on-error: true
+
     - name: Post Comment with Bestfix Report
-      id: post_comment
+      if: success() && github.event_name == 'pull_request'
       run: |
         COMMENT_RESPONSE=$(curl -X POST \
           -H "Authorization: token ${{ secrets.API_TOKEN }}" \
@@ -80,18 +88,23 @@ jobs:
         COMMENT_ID=$(echo "${COMMENT_RESPONSE}" | jq -r '.id')
         echo "COMMENT_ID=${COMMENT_ID}" >> $GITHUB_ENV
 
-    - name: Debug Comment ID
-      run: echo "Comment ID is ${{ steps.post_comment.outputs.comment_id }}"
+    - name: Download Bestfix Report Artifact
+      if: success() && github.event_name == 'pull_request'
+      uses: actions/download-artifact@v2
+      with:
+        name: artifact
+        path: ${{ github.workspace }}/artifact
 
-    - name: Attach ngsast-bestfix-report.html to PR comment
+    - name: Attach Bestfix Report to PR comment
       if: success() && github.event_name == 'pull_request'
       run: |
         curl -X POST \
           -H "Authorization: token ${{ secrets.API_TOKEN }}" \
           -H "Content-Type: application/octet-stream" \
-          --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
-          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ steps.post_comment.outputs.comment_id }}/attachments" \
+          --data-binary @"${{ github.workspace }}/artifact/ngsast-bestfix-report.html" \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
           -s -o /dev/null
+
       env:
         COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
