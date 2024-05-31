@@ -81,6 +81,7 @@ jobs:
             ${{ github.workspace }}/bestfix_body.json
             ${{ github.workspace }}/qwiet.html
             ${{ github.workspace }}/qwiet.json
+            
   
   Attach-Artifacts-To-Comment:
       runs-on: ubuntu-latest
@@ -96,7 +97,7 @@ jobs:
       - name: Attach artifacts to PR comment
         uses: actions/github-script@v4
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.API_TOKEN }}
           script: |
              const fs = require('fs');
 
@@ -117,6 +118,8 @@ jobs:
              repo: context.repo.repo,
              body: commentBody
              });
+      env:
+        GH_API_TOKEN: ${{ secrets.API_TOKEN }}
   Build-Rules:
     runs-on: ubuntu-latest
     permissions: write-all
