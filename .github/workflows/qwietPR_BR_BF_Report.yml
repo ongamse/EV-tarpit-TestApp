@@ -96,20 +96,18 @@ jobs:
       - name: Attach artifacts to PR comment
         uses: actions/github-script@v4
         with:
-           github-token: ${{ secrets.GITHUB_TOKEN }}
-           script: |
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
              const fs = require('fs');
-             const path = require('path');
 
-             const artifactsDir = path.join(__dirname, 'artifacts');
-             const artifacts = fs.readdirSync(artifactsDir);
+             const artifacts = fs.readdirSync(process.env.GITHUB_WORKSPACE + '/artifacts');
 
              let commentBody = "Here are the BestFix Report artifacts attached:\n";
 
              artifacts.forEach(artifact => {
-               const artifactPath = path.join(artifactsDir, artifact);
+               const artifactPath = process.env.GITHUB_WORKSPACE + '/artifacts/' + artifact;
                const artifactContent = fs.readFileSync(artifactPath, 'utf8');
-               const artifactName = path.basename(artifactPath);
+               const artifactName = artifact;
                commentBody += `\n**${artifactName}**:\n\`\`\`\n${artifactContent}\n\`\`\`\n`;
              });
 
