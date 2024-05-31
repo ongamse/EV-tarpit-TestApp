@@ -80,6 +80,9 @@ jobs:
         COMMENT_ID=$(echo "${COMMENT_RESPONSE}" | jq -r '.id')
         echo "COMMENT_ID=${COMMENT_ID}" >> $GITHUB_ENV
 
+    - name: Debug Comment ID
+      run: echo "Comment ID is ${{ steps.post_comment.outputs.comment_id }}"
+
     - name: Attach ngsast-bestfix-report.html to PR comment
       if: success() && github.event_name == 'pull_request'
       run: |
@@ -87,7 +90,7 @@ jobs:
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Content-Type: application/octet-stream" \
           --data-binary @"${GITHUB_WORKSPACE}/ngsast-bestfix-report.html" \
-          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ env.COMMENT_ID }}/attachments" \
+          "https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/comments/${{ steps.post_comment.outputs.comment_id }}/attachments" \
           -s -o /dev/null
       env:
         COMMENT_ID: ${{ steps.attach_comment.outputs.comment_id }}      
