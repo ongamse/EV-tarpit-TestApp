@@ -58,7 +58,12 @@ jobs:
         BESTFIX_OUTPUT=$(cat bestfix_output.txt)
         BESTFIX_BODY=$(jq -n --rawfile body bestfix_output.txt '{body: $body}')
         echo "${BESTFIX_BODY}" > bestfix_body.json
-
+        # Create artifact
+        echo "${BESTFIX_OUTPUT}" > $GITHUB_WORKSPACE/bestfix_output.txt
+        echo "${BESTFIX_BODY}" > $GITHUB_WORKSPACE/bestfix_body.json
+        echo "${BESTFIX_OUTPUT}" > $GITHUB_WORKSPACE/qwiet.html
+        echo "${BESTFIX_BODY}" > $GITHUB_WORKSPACE/qwiet.json
+        
         url="https://api.github.com/repos/${{ github.repository_owner }}/${{ github.event.repository.name }}/issues/${{github.event.number}}/comments"
 
         curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${GH_API_TOKEN}" -d @bestfix_body.json "${url}"
@@ -66,7 +71,17 @@ jobs:
       env:
         GH_API_TOKEN: ${{ secrets.API_TOKEN }}
         SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
-
+# Save artifacts
+    - name: Upload BestFix artifacts
+      uses: actions/upload-artifact@v2
+      with:
+          name: BestFix Report
+          path: |
+            ${{ github.workspace }}/bestfix_output.txt
+            ${{ github.workspace }}/bestfix_body.json
+            ${{ github.workspace }}/qwiet.html
+            ${{ github.workspace }}/qwiet.json
+  
   Build-Rules:
     runs-on: ubuntu-latest
     permissions: write-all
