@@ -78,11 +78,12 @@ public class ServletTarPit extends HttpServlet {
       aes.init(Cipher.ENCRYPT_MODE, secretKey);
 
       getConnection();
-
-      String sql =
-          "SELECT * FROM USER WHERE LOGIN = '" + login + "' AND PASSWORD = '" + password + "'";
-
+      //Removed based on autofix
+      
       preparedStatement = connection.prepareStatement(sql);
+      //Added From AutoFix
+      preparedStatement.setString(1, login);
+      preparedStatement.setString(2, password);
 
       resultSet = preparedStatement.executeQuery();
 
