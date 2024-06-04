@@ -64,16 +64,18 @@ public class ServletTarPit extends HttpServlet {
 
       /* FLAW: Insecure cryptographic algorithm (DES) 
       CWE: 327 Use of Broken or Risky Cryptographic Algorithm */
-      Cipher des = Cipher.getInstance("DES");
-      SecretKey key = KeyGenerator.getInstance("DES").generateKey();
-      des.init(Cipher.ENCRYPT_MODE, key);
+      //Took suggestion from finding
+      Cipher aes = Cipher.getInstance("AES");
+      SecretKey key = KeyGenerator.getInstance("AES").generateKey();
+      aes.init(Cipher.ENCRYPT_MODE, key);
 
       getConnection();
-
-      String sql =
-          "SELECT * FROM USER WHERE LOGIN = '" + login + "' AND PASSWORD = '" + password + "'";
-
+      //Removed as suggested by AutoFix
+      
       preparedStatement = connection.prepareStatement(sql);
+      //Added as suggested by Autofix
+      preparedStatement.setString(1, login);
+      preparedStatement.setString(2, password);
 
       resultSet = preparedStatement.executeQuery();
 
