@@ -63,10 +63,11 @@ public class ServletTarPit extends HttpServlet {
       engine.eval(request.getParameter("module"));
 
       /* FLAW: Insecure cryptographic algorithm (DES) 
-      CWE: 327 Use of Broken or Risky Cryptographic Algorithm */
-      Cipher des = Cipher.getInstance("DES");
-      SecretKey key = KeyGenerator.getInstance("DES").generateKey();
-      des.init(Cipher.ENCRYPT_MODE, key);
+      Cipher aes = Cipher.getInstance("AES");
+      KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+      keyGen.init(128); // for example
+      SecretKey secretKey = keyGen.generateKey();
+      aes.init(Cipher.ENCRYPT_MODE, secretKey);
 
       getConnection();
 
