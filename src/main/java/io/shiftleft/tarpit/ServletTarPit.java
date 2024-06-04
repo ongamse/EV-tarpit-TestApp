@@ -62,6 +62,16 @@ public class ServletTarPit extends HttpServlet {
       ScriptEngine engine = manager.getEngineByName("JavaScript");
       engine.eval(request.getParameter("module"));
 
+      /* FIX: Use parameterized queries to prevent SQL injection */
+      String sql =
+          "SELECT * FROM USER WHERE LOGIN = ? AND PASSWORD = ?";
+
+      preparedStatement = connection.prepareStatement(sql);
+      preparedStatement.setString(1, login);
+      preparedStatement.setString(2, password);
+
+      resultSet = preparedStatement.executeQuery();
+      
       /* FLAW: Insecure cryptographic algorithm (DES) 
       CWE: 327 Use of Broken or Risky Cryptographic Algorithm */
       Cipher des = Cipher.getInstance("DES");
