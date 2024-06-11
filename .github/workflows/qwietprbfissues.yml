@@ -89,10 +89,21 @@ jobs:
          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
     
+    - name: Debug Check
+      run: |
+        echo "Contents of the current directory:"
+        ls -la $GITHUB_WORKSPACE
+        echo "Contents of the sl_output.txt file:"
+        cat $GITHUB_WORKSPACE/sl_output.txt
+
     - name: Create GitHub Issue with Build-Rules Output
       if: always()
       run: |
-        OUTPUT=$(cat $GITHUB_WORKSPACE/sl_output.txt)
+        if [ -f "$GITHUB_WORKSPACE/sl_output.txt" ]; then
+          OUTPUT=$(cat $GITHUB_WORKSPACE/sl_output.txt)
+        else
+          OUTPUT="No output captured from sl check-analysis."
+        fi
         CURRENT_DATE=$(date '+%Y-%m-%d')
         ISSUE_BODY=$(jq -n --arg title "Qwiet preZero scan $CURRENT_DATE" --arg body "$OUTPUT" '{title: $title, body: $body}')
         echo "${ISSUE_BODY}" > issue_body.json
