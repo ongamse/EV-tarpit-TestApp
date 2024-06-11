@@ -1,6 +1,6 @@
 # This workflow integrates qwiet.ai preZero with GitHub
 # Visit https://docs.shiftleft.io for help
-name: qwiet.ai.PR.BR.BF.Iss
+name: qwiet.ai.pr.br.bf
 
 on:
   pull_request:
@@ -77,18 +77,19 @@ jobs:
       run: |
          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
     - name: Validate Build Rules
+      id: validate-build-rules
       run: |
          ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea \
              --github-pr-number=${{github.event.number}} \
              --github-pr-user=${{ github.repository_owner }} \
              --github-pr-repo=${{ github.event.repository.name }} \
-             --github-token=${{ secrets.GITHUB_TOKEN }}
+             --github-token=${{ secrets.GITHUB_TOKEN }} > $GITHUB_WORKSPACE/sl_output.txt 2>&1
       env:
          SHIFTLEFT_ACCESS_TOKEN: ${{ secrets.SHIFTLEFT_ACCESS_TOKEN }}
          SHIFTLEFT_API_HOST: www.shiftleft.io
          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
-    
+
     - name: Debug Check
       run: |
         echo "Contents of the current directory:"
@@ -101,6 +102,7 @@ jobs:
       run: |
         if [ -f "$GITHUB_WORKSPACE/sl_output.txt" ]; then
           OUTPUT=$(cat $GITHUB_WORKSPACE/sl_output.txt)
+          echo "Output captured: $OUTPUT"
         else
           OUTPUT="No output captured from sl check-analysis."
         fi
