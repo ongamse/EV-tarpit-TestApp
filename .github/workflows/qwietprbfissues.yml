@@ -1,6 +1,6 @@
 # This workflow integrates qwiet.ai preZero with GitHub
 # Visit https://docs.shiftleft.io for help
-name: qwiet.pr.br.bf.issue
+name: qwiet.ai.PR.BR.BF.Iss
 
 on:
   pull_request:
@@ -77,7 +77,6 @@ jobs:
       run: |
          curl https://cdn.shiftleft.io/download/sl > ${GITHUB_WORKSPACE}/sl && chmod a+rx ${GITHUB_WORKSPACE}/sl
     - name: Validate Build Rules
-      id: validate-build-rules
       run: |
          ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea \
              --github-pr-number=${{github.event.number}} \
@@ -90,7 +89,7 @@ jobs:
          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
     
-    - name: Create GitHub Issue with Build-Rules Output
+        - name: Create GitHub Issue with Build-Rules Output
       if: always()
       run: |
         OUTPUT=$(cat $GITHUB_WORKSPACE/sl_output.txt)
