@@ -89,7 +89,7 @@ jobs:
          SHIFTLEFT_GRPC_TELEMETRY_HOST: telemetry.shiftleft.io:443
          SHIFTLEFT_GRPC_API_HOST: api.shiftleft.io:443
     
-        - name: Create GitHub Issue with Build-Rules Output
+    - name: Create GitHub Issue with Build-Rules Output
       if: always()
       run: |
         OUTPUT=$(cat $GITHUB_WORKSPACE/sl_output.txt)
