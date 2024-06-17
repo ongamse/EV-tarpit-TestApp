@@ -27,7 +27,7 @@ jobs:
 
     - name: preZero Static Analysis
       run: |
-        ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
+        QWIET_EXTERNAL_SECRETS=true ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
           --app LaBrea \
           --tag branch=${{ github.head_ref }} \
           --javasrc .
