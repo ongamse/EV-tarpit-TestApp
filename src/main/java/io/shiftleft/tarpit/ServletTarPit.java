@@ -70,13 +70,14 @@ public class ServletTarPit extends HttpServlet {
 
       getConnection();
 
-      String sql =
-          "SELECT * FROM USER WHERE LOGIN = '" + login + "' AND PASSWORD = '" + password + "'";
+     String sql =
+          "SELECT * FROM USER WHERE LOGIN = ? AND PASSWORD = ?";
 
       preparedStatement = connection.prepareStatement(sql);
+      preparedStatement.setString(1, login);
+      preparedStatement.setString(2, password);
 
       resultSet = preparedStatement.executeQuery();
-
       if (resultSet.next()) {
 
         login = resultSet.getString("login");
