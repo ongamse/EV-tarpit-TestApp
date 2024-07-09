@@ -46,4 +46,13 @@ public class SecuredServlet extends HttpServlet {
         writer.println("<br/><a href='/logout'>Logout</a>");
     }
 
+        resp.setContentType("text/html");
+        PrintWriter writer = resp.getWriter();
+        writer.println("Welcome to the secured page!");
+        writer.printf("<br/>User: %s", req.getRemoteUser()); // Use of String.format to prevent XSS
+        writer.printf("<br/>time: %s", LocalDateTime.now());
+        writer.println("<br/><a href='/logout'>Logout</a>");
+    }
+
 }
+
