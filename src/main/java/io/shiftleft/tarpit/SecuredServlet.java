@@ -29,9 +29,21 @@ public class SecuredServlet extends HttpServlet {
         writer.println("<br/><a href='/logout'>Logout</a>");
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        doGet(req, resp);
+	@Override
+    protected void doGet(HttpServletRequest req,
+                         HttpServletResponse resp) throws ServletException, IOException {
+
+        Principal principal = req.getUserPrincipal();
+        if (principal == null || !req.isUserInRole("employee")) {
+            LoginHandlerServlet.forwardToLogin(req, resp, null);
+            return;
+        }
+        resp.setContentType("text/html");
+        PrintWriter writer = resp.getWriter();
+        writer.println("Welcome to the secured page!");
+        writer.printf("<br/>User: %s", req.getRemoteUser()); // Use of String.format to prevent XSS
+        writer.printf("<br/>time: %s", LocalDateTime.now());
+        writer.println("<br/><a href='/logout'>Logout</a>");
     }
+
 }
