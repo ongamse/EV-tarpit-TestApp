@@ -198,9 +198,16 @@ public class Insider extends HttpServlet {
   }
 
   private void getConnection() throws ClassNotFoundException, SQLException {
-    Class.forName("com.mysql.jdbc.Driver");
-    connection = DriverManager.getConnection("jdbc:mysql://localhost/DBPROD", "admin", "1234");
-  }
+	private void getConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("com.mysql.jdbc.Driver");
+        String url = "jdbc:mysql://localhost/DBPROD";
+        String username = "admin";
+        String password = "1234";
+        Properties properties = new Properties();
+        properties.setProperty("user", username);
+        properties.setProperty("password", password);
+        connection = DriverManager.getConnection(url, properties);
+    }
 
   private void ticking(String parameter) throws IOException {
 
@@ -218,3 +225,4 @@ public class Insider extends HttpServlet {
   }
 
 }
+
