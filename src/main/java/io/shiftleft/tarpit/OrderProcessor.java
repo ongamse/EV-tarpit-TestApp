@@ -72,23 +72,34 @@ public class OrderProcessor extends HttpServlet {
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+	import org.owasp.encoder.Encode;
+	import javax.servlet.http.HttpServletRequest;
+	import javax.servlet.http.HttpServletResponse;
+	import java.io.IOException;
+	import java.io.PrintWriter;
 
-    PrintWriter out = response.getWriter();
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-    try {
-      // read from file, convert it to user class
-      Order order = deserializer.readValue(request.getReader(), Order.class);
-      out.println(order);
-    } catch (JsonGenerationException e) {
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    out.close();
-  }
+		PrintWriter out = response.getWriter();
+
+		try {
+			// read from file, convert it to user class
+			Order order = deserializer.readValue(request.getReader(), Order.class);
+			
+			// Encode the order object to prevent XSS
+			String encodedOrder = Encode.forHtml(order.toString());
+			
+			out.println(encodedOrder);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		out.close();
+	}
 
   private void getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.jdbc.Driver");
@@ -96,3 +107,4 @@ public class OrderProcessor extends HttpServlet {
   }
 
 }
+
