@@ -87,5 +87,16 @@ public class FileUploader extends HttpServlet {
     doGet(request, response);
   }
 
+
+    input.close();
+    out.flush();
+    out.close();
+
+    Unzipper.unzipFile(targetFile.getAbsolutePath(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
 }
+
 
