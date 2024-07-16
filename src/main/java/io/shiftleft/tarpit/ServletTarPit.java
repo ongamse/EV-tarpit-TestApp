@@ -34,7 +34,7 @@ public class ServletTarPit extends HttpServlet {
 
   private final static Logger LOGGER = Logger.getLogger(ServletTarPit.class.getName());
 
-  @Override
+	@Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
@@ -71,9 +71,11 @@ public class ServletTarPit extends HttpServlet {
       getConnection();
 
       String sql =
-          "SELECT * FROM USER WHERE LOGIN = '" + login + "' AND PASSWORD = '" + password + "'";
+          "SELECT * FROM USER WHERE LOGIN = ? AND PASSWORD = ?";
 
       preparedStatement = connection.prepareStatement(sql);
+      preparedStatement.setString(1, login);
+      preparedStatement.setString(2, password);
 
       resultSet = preparedStatement.executeQuery();
 
@@ -107,6 +109,21 @@ public class ServletTarPit extends HttpServlet {
         getServletContext().getRequestDispatcher("/dashboard.jsp").forward(request, response);
 
       } else {
+        request.setAttribute("login", login);
+        request.setAttribute("password", password);
+        request.setAttribute("keepOnline", keepOnline);
+        request.setAttribute("message", "Failed to Sign in. Please verify credentials");
+
+        LOGGER.info(" UserId " + login + " failed to logged in ");
+
+        getServletContext().getRequestDispatcher("/signIn.jsp").forward(request, response);
+      }
+    } catch (Exception e) {
+      throw new ServletException(e);
+    }
+
+  }
+
         request.setAttribute("login", login);
         request.setAttribute("password", password);
         request.setAttribute("keepOnline", keepOnline);
