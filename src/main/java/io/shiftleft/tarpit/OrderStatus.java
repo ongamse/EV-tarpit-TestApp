@@ -31,79 +31,81 @@ public class OrderStatus extends HttpServlet {
   private final static Logger LOGGER = Logger.getLogger(ServletTarPit.class.getName());
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-    String orderId = request.getParameter("orderId");
+	String orderId = request.getParameter("orderId");
 
-    boolean keepOnline = (request.getParameter("keeponline") != null);
+	boolean keepOnline = (request.getParameter("keeponline") != null);
 
-    try {
+	try {
 
-      String theUser = request.getParameter("userId");
-      String thePassword = request.getParameter("password");
-      request.setAttribute("callback", "/orderStatus.jsp");
+		String theUser = request.getParameter("userId");
+		String thePassword = request.getParameter("password");
+		request.setAttribute("callback", "/orderStatus.jsp");
 
-      getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+		getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
 
-      boolean loggedIn = request.isUserInRole("customer");
+		boolean loggedIn = request.isUserInRole("customer");
 
-      if (loggedIn) {
+		if (loggedIn) {
 
-        getConnection();
+			getConnection();
 
-        String sql = "SELECT * FROM ORDER WHERE ORDERID = '" + orderId;
-        preparedStatement = connection.prepareStatement(sql);
+			// Use PreparedStatement to prevent SQL injection
+			String sql = "SELECT * FROM ORDER WHERE ORDERID = ?";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, orderId); // Set the parameter safely
 
-        resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 
-        if (resultSet.next()) {
+			if (resultSet.next()) {
 
-          orderId = resultSet.getString("login");
+				orderId = resultSet.getString("login");
 
-          Order order = new Order(orderId,
-              resultSet.getString("custId"),
-              resultSet.getDate("orderDate"),
-              resultSet.getString("orderStatus"),
-              resultSet.getDate("shipDate"),
-              resultSet.getString("creditCardNumber"),
-              resultSet.getString("street"),
-              resultSet.getString("city"),
-              resultSet.getString("state"),
-              resultSet.getString("zipCode"),
-              resultSet.getString("emailAddress"));
+				Order order = new Order(orderId,
+						resultSet.getString("custId"),
+						resultSet.getDate("orderDate"),
+						resultSet.getString("orderStatus"),
+						resultSet.getDate("shipDate"),
+						resultSet.getString("creditCardNumber"),
+						resultSet.getString("street"),
+						resultSet.getString("city"),
+						resultSet.getString("state"),
+						resultSet.getString("zipCode"),
+						resultSet.getString("emailAddress"));
 
-          Cookie cookie = new Cookie("order", orderId);
-          cookie.setMaxAge(864000);
-          cookie.setPath("/");
-          response.addCookie(cookie);
+				Cookie cookie = new Cookie("order", orderId);
+				cookie.setMaxAge(864000);
+				cookie.setPath("/");
+				response.addCookie(cookie);
 
-          request.setAttribute("orderDetails", order);
+				request.setAttribute("orderDetails", order);
 
-          LOGGER.info("Order details are " + order);
+				LOGGER.info("Order details are " + order);
 
-          getServletContext().getRequestDispatcher("/dashboard.jsp").forward(request, response);
+				getServletContext().getRequestDispatcher("/dashboard.jsp").forward(request, response);
 
-        } else {
+			} else {
 
-          request.setAttribute("message", "Order does not exist");
+				request.setAttribute("message", "Order does not exist");
 
-          LOGGER.info(" Order " + orderId + " does not exist ");
+				LOGGER.info(" Order " + orderId + " does not exist ");
 
-          getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
-        }
+				getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
+			}
 
-      } else {
+		} else {
 
-        getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
-      }
+			getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+		}
 
-    } catch (Exception e) {
-      throw new ServletException(e);
-    }
+	} catch (Exception e) {
+		throw new ServletException(e);
+	}
 
-
-  }
+	}
 
   private void getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.jdbc.Driver");
@@ -111,3 +113,4 @@ public class OrderStatus extends HttpServlet {
   }
 
 }
+
