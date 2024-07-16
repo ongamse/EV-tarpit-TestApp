@@ -11,11 +11,29 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class Unzipper {
 
-  public static void unzipFile(String zipFileWithAbsolutePath, String destination)
+	public static void unzipFile(String zipFileWithAbsolutePath, String destination)
       throws IOException {
     if (!doesFileExists(zipFileWithAbsolutePath)) {
       throw new FileNotFoundException("The given zip file not found: " + zipFileWithAbsolutePath);
     }
+
+    String fileName = getFileFromPath(zipFileWithAbsolutePath);
+    String finalDestination = getFinalDestination(fileName, destination);
+    createDirectoryNamedAsZipFile(finalDestination);
+
+    try {
+      // Initiate ZipFile object with the path/name of the zip file.
+      ZipFile zipFile = new ZipFile(zipFileWithAbsolutePath);
+
+      // Extracts all files to the path specified
+      zipFile.extractAll(finalDestination);
+
+    } catch (ZipException e) {
+      e.printStackTrace();
+    }
+
+  }
+
 
     isFilenameValid(zipFileWithAbsolutePath);
 
