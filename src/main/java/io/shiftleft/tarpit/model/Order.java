@@ -38,14 +38,16 @@ public class Order {
     this.orderDate = orderDate;
     this.orderStatus = orderStatus;
     this.shipDate = shipDate;
-    // Encrypt the credit card number before storing it
-    this.creditCardNumber = encrypt(creditCardNumber);
+    // Mask credit card number
+    this.creditCardNumber = "************" + creditCardNumber.substring(creditCardNumber.length() - 4);
     this.street = street;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
-    this.emailAddress = emailAddress;
+    // Mask email address
+    this.emailAddress = emailAddress.replaceAll("(?<=.{2}).(?=[^@]*@)", "*");
   }
+
 
   private String encrypt(String data) {
     // Use a secure encryption algorithm to encrypt the data
@@ -169,6 +171,7 @@ public class Order {
         '}';
   }
 }
+
 
 
 
