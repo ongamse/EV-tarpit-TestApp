@@ -37,7 +37,7 @@ public class OrderProcessor extends HttpServlet {
   private ResultSet resultSet;
 
 
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
     PrintWriter out = response.getWriter();
@@ -48,8 +48,10 @@ public class OrderProcessor extends HttpServlet {
       getConnection();
 
       Statement statement = connection.createStatement();
+      // Encrypting the credit card number before storing it into the database.
+      String encryptedCCN = encrypt(customerOrder.getCreditCardNumber());
       statement.executeUpdate("INSERT INTO Order " +
-          "VALUES ('1234','5678', '04/10/2019', 'PENDING', '04/10/2019', 'Lakeside Drive', 'Santa Clara', 'CA', '95054', 'mike@waltz.com')");
+          "VALUES ('1234','5678', '04/10/2019', 'PENDING', '04/10/2019', '"+encryptedCCN+"', 'Lakeside Drive', 'Santa Clara', 'CA', '95054', 'mike@waltz.com')");
 
       String customerEmail = customerOrder.getEmailAddress();
       String subject = "Transactions Status of Order : " + customerOrder.getOrderId();
@@ -58,6 +60,24 @@ public class OrderProcessor extends HttpServlet {
       emailService.sendMail(fromAddress, customerEmail, subject, message);
 
     } catch (JsonGenerationException e) {
+      e.printStackTrace();
+    } catch (JsonMappingException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (ParseException e) {
+      e.printStackTrace();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    out.close();
+  }
+
+  private String encrypt(String data) {
+    // Use a secure encryption algorithm to encrypt the data.
+    // For example, AES encryption can be used.
+  }
+
       e.printStackTrace();
     } catch (JsonMappingException e) {
       e.printStackTrace();
@@ -95,4 +115,5 @@ public class OrderProcessor extends HttpServlet {
   }
 
 }
+
 
