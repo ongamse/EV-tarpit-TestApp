@@ -38,17 +38,16 @@ public class Order {
     this.orderDate = orderDate;
     this.orderStatus = orderStatus;
     this.shipDate = shipDate;
-    // Mask or remove credit card number
+    // Mask the credit card number
     this.creditCardNumber = "************" + creditCardNumber.substring(creditCardNumber.length() - 4);
     this.street = street;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
-    // Mask or remove email address
-    int atIndex = emailAddress.indexOf('@');
-    if (atIndex > 0) {
-        this.emailAddress = emailAddress.substring(0, atIndex - 1) + "...@" + emailAddress.substring(atIndex + 1);
-    } else {
+    // Mask the email address
+    this.emailAddress = emailAddress.replaceAll("(?<=.{2}).(?=[^@]*@)", "*");
+  }
+
         this.emailAddress = "...@...";
     }
   }
@@ -178,6 +177,7 @@ public class Order {
         '}';
   }
 }
+
 
 
 
