@@ -38,9 +38,24 @@ public class SecuredServlet extends HttpServlet {
         writer.println("<br/><a href='" + logoutUrl + "'>Logout</a>");
     }
 
-    @Override
+	@Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        doGet(req, resp);
+        // Ensure that only authenticated users can access this method
+        Principal principal = req.getUserPrincipal();
+        if (principal == null || !req.isUserInRole("employee")) {
+            LoginHandlerServlet.forwardToLogin(req, resp, null);
+            return;
+        }
+        
+        // Process the request
+        processRequest(req, resp);
     }
+	
+	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Implement the logic to handle the request here
+        // ...
+    }
+
 }
+
