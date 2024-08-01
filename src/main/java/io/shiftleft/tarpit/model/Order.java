@@ -30,21 +30,22 @@ public class Order {
 
   static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-  public Order(String orderId, String custId, Date orderDate, String orderStatus,
-      Date shipDate, String creditCardNumber, String street, String city, String state,
+	public Order(String orderId, String custId, Date orderDate, String orderStatus,
+      Date shipDate, String street, String city, String state,
       String zipCode, String emailAddress) {
     this.orderId = orderId;
     this.custId = custId;
     this.orderDate = orderDate;
     this.orderStatus = orderStatus;
     this.shipDate = shipDate;
-    this.creditCardNumber = creditCardNumber;
     this.street = street;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
     this.emailAddress = emailAddress;
+    // Removed creditCardNumber as it's removed from the constructor
   }
+
 
   public static Order getDefaultOrder() throws ParseException {
     return new Order("1234","5678", formatter.parse("04/10/2019"), "PENDING", formatter.parse(""), "344472003047574", "Lakeside Drive", "Santa Clara", "CA", "95054", "mike@waltz.com");
@@ -157,3 +158,4 @@ public class Order {
         '}';
   }
 }
+
