@@ -72,22 +72,21 @@ public class OrderProcessor extends HttpServlet {
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    PrintWriter out = response.getWriter();
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
 
-    try {
+    try (PrintWriter out = response.getWriter()) {
+
       // read from file, convert it to user class
       Order order = deserializer.readValue(request.getReader(), Order.class);
-      out.println(order);
-    } catch (JsonGenerationException e) {
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+      String jsonOutput = objectMapper.writeValueAsString(order);
+      out.println(jsonOutput);
+    } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
-    out.close();
   }
 
   private void getConnection() throws ClassNotFoundException, SQLException {
@@ -96,3 +95,4 @@ public class OrderProcessor extends HttpServlet {
   }
 
 }
+
