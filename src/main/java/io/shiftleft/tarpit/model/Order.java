@@ -38,15 +38,21 @@ public class Order {
     this.orderDate = orderDate;
     this.orderStatus = orderStatus;
     this.shipDate = shipDate;
-    // Mask the credit card number
-    this.creditCardNumber = "************" + creditCardNumber.substring(creditCardNumber.length() - 4);
+    // Encrypt the credit card number before storing it
+    this.creditCardNumber = encrypt(creditCardNumber);
     this.street = street;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
-    // Mask the email address
-    this.emailAddress = emailAddress.replace("@", "[at]").replace(".", "[dot]");
+    this.emailAddress = emailAddress;
   }
+
+  private String encrypt(String data) {
+    // Use a secure encryption algorithm to encrypt the data
+    // For example, AES encryption
+    // ...
+  }
+
 
   }
 
@@ -163,6 +169,7 @@ public class Order {
         '}';
   }
 }
+
 
 
 
