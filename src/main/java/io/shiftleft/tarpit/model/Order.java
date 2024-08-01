@@ -38,14 +38,16 @@ public class Order {
     this.orderDate = orderDate;
     this.orderStatus = orderStatus;
     this.shipDate = shipDate;
-    // Mask the credit card number
+    // Mask credit card number
     this.creditCardNumber = "************" + creditCardNumber.substring(creditCardNumber.length() - 4);
     this.street = street;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
-    // Mask the email address
+    // Mask email address
     this.emailAddress = emailAddress.replaceAll("(?<=.{2}).(?=[^@]*@)", "*");
+  }
+
   }
 
         this.emailAddress = "...@...";
@@ -177,6 +179,7 @@ public class Order {
         '}';
   }
 }
+
 
 
 
