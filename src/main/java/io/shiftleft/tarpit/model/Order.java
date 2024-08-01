@@ -45,7 +45,9 @@ public class Order {
     this.state = state;
     this.zipCode = zipCode;
     // Mask the email address
-    this.emailAddress = emailAddress.replaceAll("(?<=.{2}).(?=[^@]*@)", "*");
+    this.emailAddress = emailAddress.replace("@", "[at]").replace(".", "[dot]");
+  }
+
   }
 
 
@@ -161,5 +163,6 @@ public class Order {
         '}';
   }
 }
+
 
 
