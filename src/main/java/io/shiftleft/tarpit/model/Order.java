@@ -44,9 +44,10 @@ public class Order {
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
-    // Mask the email address
-    this.emailAddress = emailAddress.replace("@", "[at]").replace(".", "[dot]");
+    // Do not expose email address
+    this.emailAddress = "**********";
   }
+
 
   }
 
@@ -181,6 +182,7 @@ public class Order {
         '}';
   }
 }
+
 
 
 
