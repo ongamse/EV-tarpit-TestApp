@@ -31,20 +31,23 @@ public class Order {
   static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
 	public Order(String orderId, String custId, Date orderDate, String orderStatus,
-      Date shipDate, String street, String city, String state,
+      Date shipDate, String creditCardNumber, String street, String city, String state,
       String zipCode, String emailAddress) {
     this.orderId = orderId;
     this.custId = custId;
     this.orderDate = orderDate;
     this.orderStatus = orderStatus;
     this.shipDate = shipDate;
+    // Mask the credit card number
+    this.creditCardNumber = "************" + creditCardNumber.substring(creditCardNumber.length() - 4);
     this.street = street;
     this.city = city;
     this.state = state;
     this.zipCode = zipCode;
-    this.emailAddress = emailAddress;
-    // Removed creditCardNumber as it's removed from the constructor
+    // Mask the email address
+    this.emailAddress = emailAddress.replaceAll("(?<=.{2}).(?=[^@]*@)", "*");
   }
+
 
 
   public static Order getDefaultOrder() throws ParseException {
@@ -158,4 +161,5 @@ public class Order {
         '}';
   }
 }
+
 
