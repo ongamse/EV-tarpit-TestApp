@@ -171,12 +171,33 @@ public class OrderStatus extends HttpServlet {
 
 	}
 
+
+					request.setAttribute("message", "Order does not exist");
+
+					LOGGER.info(" Order " + orderId + " does not exist ");
+
+					getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
+				}
+
+			} else {
+
+				getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+			}
+
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+
+
+	}
+
   private void getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.jdbc.Driver");
     connection = DriverManager.getConnection("jdbc:mysql://localhost/DBPROD", "admin", "1234");
   }
 
 }
+
 
 
 
