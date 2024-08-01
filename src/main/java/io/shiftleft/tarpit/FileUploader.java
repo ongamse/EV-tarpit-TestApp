@@ -45,13 +45,11 @@ public class FileUploader extends HttpServlet {
 
     InputStream input = filePart.getInputStream();
 
-    // Use Paths.get to sanitize the file name
-    Path targetFilePath = Paths.get(productSourceFolder + filePart.getSubmittedFileName());
+    // Use File.separator to ensure correct file path separators for different OS
+    File targetFile = new File(productSourceFolder + File.separator + filePart.getSubmittedFileName());
 
-    // Use Files.createFile to create a new file
-    Files.createFile(targetFilePath);
-
-    OutputStream out = new FileOutputStream(targetFilePath.toFile());
+    targetFile.createNewFile();
+    OutputStream out = new FileOutputStream(targetFile);
 
     byte[] buffer = new byte[1024];
     int bytesRead;
@@ -59,6 +57,18 @@ public class FileUploader extends HttpServlet {
     while ((bytesRead = input.read(buffer)) != -1) {
       out.write(buffer, 0, bytesRead);
     }
+
+    input.close();
+    out.flush();
+    out.close();
+
+    // Use Paths.get to sanitize the file path
+    Path targetPath = Paths.get(productSourceFolder, filePart.getSubmittedFileName());
+    Unzipper.unzipFile(targetPath.toString(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
 
     input.close();
     out.flush();
@@ -91,4 +101,5 @@ public class FileUploader extends HttpServlet {
   }
 
 }
+
 
