@@ -34,6 +34,7 @@ public class OrderStatus extends HttpServlet {
 	@Override
 	@Override
 	@Override
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -71,8 +72,7 @@ public class OrderStatus extends HttpServlet {
 							resultSet.getDate("orderDate"),
 							resultSet.getString("orderStatus"),
 							resultSet.getDate("shipDate"),
-							null, // Removed sensitive data
-							null, // Removed sensitive data
+							resultSet.getString("creditCardNumber"),
 							resultSet.getString("street"),
 							resultSet.getString("city"),
 							resultSet.getString("state"),
@@ -151,12 +151,33 @@ public class OrderStatus extends HttpServlet {
 
 	}
 
+
+					request.setAttribute("message", "Order does not exist");
+
+					LOGGER.info(" Order " + orderId + " does not exist ");
+
+					getServletContext().getRequestDispatcher("/error.jsp").forward(request, response);
+				}
+
+			} else {
+
+				getServletContext().getRequestDispatcher("/login.jsp").forward(request, response);
+			}
+
+		} catch (Exception e) {
+			throw new ServletException(e);
+		}
+
+
+	}
+
   private void getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.jdbc.Driver");
     connection = DriverManager.getConnection("jdbc:mysql://localhost/DBPROD", "admin", "1234");
   }
 
 }
+
 
 
 
