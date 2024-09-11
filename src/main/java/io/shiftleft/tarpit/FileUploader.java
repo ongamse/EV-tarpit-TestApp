@@ -42,11 +42,11 @@ public class FileUploader extends HttpServlet {
       throws ServletException, IOException {
 
     Part filePart = request.getPart("zipFile");
-    String fileName = new File(filePart.getSubmittedFileName()).getName();
 
     InputStream input = filePart.getInputStream();
 
-    File targetFile = new File(productSourceFolder, fileName);
+    // Use File.separator to ensure correct file path separators for different OS
+    File targetFile = new File(productSourceFolder + File.separator + filePart.getSubmittedFileName());
 
     targetFile.createNewFile();
     OutputStream out = new FileOutputStream(targetFile);
@@ -57,6 +57,18 @@ public class FileUploader extends HttpServlet {
     while ((bytesRead = input.read(buffer)) != -1) {
       out.write(buffer, 0, bytesRead);
     }
+
+    input.close();
+    out.flush();
+    out.close();
+
+    // Use Paths.get to sanitize the file path
+    Path path = Paths.get(targetFile.getAbsolutePath());
+    Unzipper.unzipFile(path.toString(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
 
     input.close();
     out.flush();
@@ -102,5 +114,6 @@ public class FileUploader extends HttpServlet {
   }
 
 }
+
 
 
