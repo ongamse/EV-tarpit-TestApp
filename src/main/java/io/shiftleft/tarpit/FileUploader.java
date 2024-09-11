@@ -63,6 +63,17 @@ public class FileUploader extends HttpServlet {
     out.close();
 
     // Use Paths.get to sanitize the file path
+    Unzipper.unzipFile(Paths.get(targetFile.getAbsolutePath()).toString(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
+
+    input.close();
+    out.flush();
+    out.close();
+
+    // Use Paths.get to sanitize the file path
     Path path = Paths.get(targetFile.getAbsolutePath());
     Unzipper.unzipFile(path.toString(), productDestinationFolder);
 
@@ -114,6 +125,7 @@ public class FileUploader extends HttpServlet {
   }
 
 }
+
 
 
 
