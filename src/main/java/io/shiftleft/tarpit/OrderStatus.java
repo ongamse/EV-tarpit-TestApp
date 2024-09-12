@@ -31,16 +31,11 @@ public class OrderStatus extends HttpServlet {
   private final static Logger LOGGER = Logger.getLogger(ServletTarPit.class.getName());
 
   @Override
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
 
-		String orderId = request.getParameter("orderId");
+  private void getConnection() throws ClassNotFoundException, SQLException {
+    Class.forName("com.mysql.jdbc.Driver");
+    connection = DriverManager.getConnection("jdbc:mysql://localhost/DBPROD", "admin", "1234");
+  }
 
-		boolean keepOnline = (request.getParameter("keeponline") != null);
+}
 
-		try {
-
-			String theUser = request.getParameter("userId");
-			String thePassword = request.getParameter("password");
-			request.setAttribute("callback", "/orderStatus.jsp");
