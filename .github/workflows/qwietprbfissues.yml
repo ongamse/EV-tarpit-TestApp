@@ -28,7 +28,7 @@ jobs:
     - name: preZero Static Analysis
       run: |
         QWIET_EXTERNAL_SECRETS=true ${GITHUB_WORKSPACE}/sl analyze --strict --wait \
-          --app LaBrea \
+          --app LaBrea2 \
           --tag branch=${{ github.head_ref }} \
           --javasrc .
       env:
@@ -79,7 +79,7 @@ jobs:
     - name: Validate Build Rules
       id: validate-build-rules
       run: |
-         ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea \
+         ${GITHUB_WORKSPACE}/sl check-analysis --app LaBrea2 \
              --github-pr-number=${{github.event.number}} \
              --github-pr-user=${{ github.repository_owner }} \
              --github-pr-repo=${{ github.event.repository.name }} \
