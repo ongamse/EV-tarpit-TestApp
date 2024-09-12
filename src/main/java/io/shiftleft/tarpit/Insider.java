@@ -166,13 +166,10 @@ public class Insider extends HttpServlet {
 
   Pattern p = Pattern.compile("^[A-Za-z0-9\\\\\\/\\=\\-+.]*$");
 
-	public String validate(String value) {
+  public String validate(String value) {
     if (value.contains("SOMETHING_HERE")) {
       return value;
     }
-    return "";
-  }
-
     return "";
   }
 
@@ -221,4 +218,3 @@ public class Insider extends HttpServlet {
   }
 
 }
-
