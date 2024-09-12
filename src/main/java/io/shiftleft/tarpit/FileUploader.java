@@ -38,14 +38,15 @@ public class FileUploader extends HttpServlet {
   /**
    * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
    */
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
     Part filePart = request.getPart("zipFile");
 
     InputStream input = filePart.getInputStream();
 
-    File targetFile = new File(productSourceFolder + filePart.getSubmittedFileName());
+    // Use File.separator to ensure correct file path separators for different OS
+    File targetFile = new File(productSourceFolder + File.separator + filePart.getSubmittedFileName());
 
     targetFile.createNewFile();
     OutputStream out = new FileOutputStream(targetFile);
@@ -61,9 +62,70 @@ public class FileUploader extends HttpServlet {
     out.flush();
     out.close();
 
+    // Use Paths.get to sanitize the file path
+    Unzipper.unzipFile(Paths.get(targetFile.getAbsolutePath()).toString(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
+
+    input.close();
+    out.flush();
+    out.close();
+
+    // Use Paths.get to sanitize the file path
+    Path path = Paths.get(targetFile.getAbsolutePath());
+    Unzipper.unzipFile(path.toString(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
+
+    input.close();
+    out.flush();
+    out.close();
+
+    Unzipper.unzipFile(targetFile.getAbsolutePath(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
+
+    input.close();
+    out.flush();
+    out.close();
+
+    // Use Paths.get to sanitize the file path
+    Path zipFilePath = Paths.get(targetFilePath.toString());
+    Path destinationPath = Paths.get(productDestinationFolder.toString());
+
+    Unzipper.unzipFile(zipFilePath.toString(), destinationPath.toString());
+
+    doGet(request, response);
+  }
+
+
+    input.close();
+    out.flush();
+    out.close();
+
+    Unzipper.unzipFile(targetFile.getAbsolutePath(), productDestinationFolder);
+
+    doGet(request, response);
+  }
+
+
+    input.close();
+    out.flush();
+    out.close();
+
     Unzipper.unzipFile(targetFile.getAbsolutePath(), productDestinationFolder);
 
     doGet(request, response);
   }
 
 }
+
+
+
+
